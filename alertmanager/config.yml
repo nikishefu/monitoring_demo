@@ -1,0 +1,24 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "telegram"
+  group_by: ["alertname"]
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 1h
+
+receivers:
+  - name: "default"
+    webhook_configs:
+      - url: "http://example.com"
+  - name: "telegram"
+    telegram_configs:
+      - bot_token: <secret>
+        chat_id: <secret>
+        message: |
+          <b>ALERT: {{ .CommonLabels.alertname }}</b>
+          Instance: <code>{{ .CommonLabels.instance }}</code>
+          Severity: <b>{{ .CommonLabels.severity }}</b>
+
+          {{ .CommonAnnotations.summary }}
